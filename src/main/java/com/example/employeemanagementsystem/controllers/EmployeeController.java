@@ -1,19 +1,11 @@
 package com.example.employeemanagementsystem.controllers;
 
-import com.example.employeemanagementsystem.models.Department;
 import com.example.employeemanagementsystem.models.Employee;
-import com.example.employeemanagementsystem.models.Project;
-import com.example.employeemanagementsystem.models.dtos.EmployeeRequest;
-import com.example.employeemanagementsystem.repositories.DepartmentRepository;
-import com.example.employeemanagementsystem.repositories.EmployeeRepository;
-import com.example.employeemanagementsystem.repositories.ProjectRepository;
+import com.example.employeemanagementsystem.models.dtos.EmployeeDto;
 import com.example.employeemanagementsystem.services.EmployeeService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -34,12 +26,12 @@ public class EmployeeController {
             return employeeService.getEmployeeById(id);
     }
     @PostMapping("")
-    public Employee createEmployee(@Valid @RequestBody EmployeeRequest employeeRequest){
-        return employeeService.createEmployee(employeeRequest);
+    public Employee createEmployee(@Valid @RequestBody EmployeeDto employeeDto){
+        return employeeService.createEmployee(employeeDto);
     }
     @PutMapping("")
-    public Employee updateEmployee(@RequestBody EmployeeRequest employeeRequest){
-        return employeeService.updateEmployee(employeeRequest);
+    public Employee updateEmployee(@RequestBody EmployeeDto employeeDto){
+        return employeeService.updateEmployee(employeeDto);
     }
     @DeleteMapping("")
     public String deleteEmployee(@RequestParam("id") Long id){

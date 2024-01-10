@@ -6,12 +6,14 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Data
 public class ProjectRequest {
-    @NotEmpty
+    private Long id;
     private String name;
-    @NotNull
     private Long departmentId;
+    private List<Long> employeeIds;
 }

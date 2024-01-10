@@ -13,6 +13,6 @@ public interface DepartmentService {
     List<Employee> getAllEmployeesByDepartmentId(Long id);
     Department createDepartment(DepartmentRequest departmentRequest);
     Department getDepartmentById(Long id);
-
     String deleteDepartmentById(Long id);
+    Department updateDepartmentName(Long id,String name);
 }

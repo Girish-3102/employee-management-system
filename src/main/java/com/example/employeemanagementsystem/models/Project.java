@@ -27,19 +27,17 @@ public class Project {
     @JsonBackReference
     private Department department;
 
-    @ManyToMany(targetEntity = Employee.class,mappedBy = "project")
+    @ManyToMany(targetEntity = Employee.class,cascade =  {CascadeType.MERGE,CascadeType.PERSIST})
+    @JoinTable(
+            name = "employee_project",
+            joinColumns = @JoinColumn(name = "employee_id",referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "project_id",referencedColumnName = "id"))
     @JsonManagedReference
     private List<Employee> employees=new ArrayList<>();
 
     public Project(String name, Department department) {
         this.name = name;
         this.department = department;
-    }
-    @PreRemove
-    public void remove(){
-        for(Employee e:employees){
-            e.getProject().remove(this);
-        }
     }
 
     public Project(){}

@@ -1,15 +1,14 @@
 package com.example.employeemanagementsystem.services;
 
 import com.example.employeemanagementsystem.models.Employee;
-import com.example.employeemanagementsystem.models.dtos.EmployeeRequest;
+import com.example.employeemanagementsystem.models.dtos.EmployeeDto;
 
 import java.util.List;
 
 public interface EmployeeService {
-    Employee createEmployee(EmployeeRequest employeeRequest);
+    Employee createEmployee(EmployeeDto employeeDto);
     Employee getEmployeeById(Long id);
     List<Employee> getAllEmployees();
-    Employee updateEmployee(EmployeeRequest employeeRequest);
-
+    Employee updateEmployee(EmployeeDto employeeDto);
     String deleteEmployee(Long id);
 }

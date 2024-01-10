@@ -30,11 +30,7 @@ public class Employee {
     @JsonBackReference
     private Department department;
 
-    @ManyToMany(targetEntity = Project.class)
-    @JoinTable(
-            name = "employee_project",
-            joinColumns = @JoinColumn(name = "employee_id",referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "project_id",referencedColumnName = "id"))
+    @ManyToMany(targetEntity = Project.class,mappedBy = "employees",cascade = {CascadeType.MERGE,CascadeType.PERSIST})
     @JsonBackReference
     private List<Project> project=new ArrayList<>();
 
@@ -45,4 +41,11 @@ public class Employee {
         this.department = department;
     }
     public Employee(){}
+
+    @PreRemove
+    public void remove(){
+        for(Project p:project){
+            p.getEmployees().remove(this);
+        }
+    }
 }
