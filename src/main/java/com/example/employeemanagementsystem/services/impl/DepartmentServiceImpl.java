@@ -7,14 +7,19 @@ import com.example.employeemanagementsystem.models.dtos.DepartmentRequest;
 import com.example.employeemanagementsystem.repositories.DepartmentRepository;
 import com.example.employeemanagementsystem.repositories.ProjectRepository;
 import com.example.employeemanagementsystem.services.DepartmentService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DepartmentServiceImpl implements DepartmentService {
-    @Autowired private DepartmentRepository departmentRepository;
+    private final DepartmentRepository departmentRepository;
+    public DepartmentServiceImpl(DepartmentRepository departmentRepository) {
+        this.departmentRepository = departmentRepository;
+    }
 
     @Override
     public List<Department> getAllDepartments() {
@@ -38,24 +43,25 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public Department getDepartmentById(Long id) {
-        Department department=departmentRepository.findById(id).orElse(null);
-        return department;
+        Optional<Department> department=departmentRepository.findById(id);
+        if(department.isPresent()){
+            return department.get();
+        }
+        else {
+            throw new EntityNotFoundException("Department with the requested ID not found.");
+        }
     }
 
     @Override
     public Department updateDepartmentName(Long id, String name) {
-        Department department=departmentRepository.findById(id).orElseThrow();
+        Department department=getDepartmentById(id);
         department.setName(name);
-        return department;
+        return departmentRepository.save(department);
     }
 
     @Override
     public String deleteDepartmentById(Long id) {
-        try{
-            departmentRepository.deleteById(id);
-            return "Success";
-        }catch (Exception e){
-            return e.getMessage();
-        }
+        departmentRepository.deleteById(id);
+        return "Success";
     }
 }

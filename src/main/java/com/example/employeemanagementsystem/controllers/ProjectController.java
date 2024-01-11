@@ -28,12 +28,12 @@ public class ProjectController {
     }
 
     @PutMapping("")
-    public Project updateProject(@RequestBody ProjectRequest projectRequest){
-        return projectService.updateProject(projectRequest.getId(),projectRequest.getName());
+    public Project updateProject(@RequestParam("id")Long id,@RequestBody ProjectRequest projectRequest){
+        return projectService.updateProject(id,projectRequest.getName());
     }
     @PutMapping("addEmployees")
-    public String addEmployees(@RequestBody ProjectRequest projectRequest){
-        return projectService.addEmployees(projectRequest.getId(),projectRequest.getEmployeeIds());
+    public String addEmployees(@RequestParam("id")Long id,@RequestBody ProjectRequest projectRequest){
+        return projectService.addEmployees(id,projectRequest.getEmployeeIds());
     }
     @DeleteMapping
     public String deleteProject(@RequestParam("id") Long id){
