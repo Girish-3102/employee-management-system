@@ -10,6 +10,7 @@ import com.example.employeemanagementsystem.repositories.ProjectRepository;
 import com.example.employeemanagementsystem.services.DepartmentService;
 import com.example.employeemanagementsystem.services.EmployeeService;
 import com.example.employeemanagementsystem.services.ProjectService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,9 +19,16 @@ import java.util.Optional;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
-    @Autowired ProjectRepository projectRepository;
-    @Autowired DepartmentService departmentService;
-    @Autowired EmployeeService employeeService;
+    final private ProjectRepository projectRepository;
+    final private DepartmentService departmentService;
+    final private EmployeeService employeeService;
+
+    public ProjectServiceImpl(ProjectRepository projectRepository, DepartmentService departmentService, EmployeeService employeeService) {
+        this.projectRepository = projectRepository;
+        this.departmentService = departmentService;
+        this.employeeService = employeeService;
+    }
+
     @Override
     public List<Project> getAllProjects() {
         return projectRepository.findAll();
@@ -28,7 +36,13 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public Project getProjectById(Long id) {
-        return projectRepository.findById(id).orElse(null);
+        Optional<Project> project=projectRepository.findById(id);
+        if(project.isPresent()){
+            return project.get();
+        }
+        else {
+            throw new EntityNotFoundException("Project with the requested ID not found");
+        }
     }
 
     @Override
@@ -39,26 +53,19 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public String deleteProjectById(Long id) {
-        try {
             projectRepository.deleteById(id);
             return "Success";
-        }catch (Exception e){
-            return e.getMessage();
-        }
     }
     @Override
     public Project updateProject(Long id,String name){
-        Optional<Project> project=projectRepository.findById(id);
-        if(project.isPresent()){
-            project.get().setName(name);
-            return projectRepository.save(project.get());
-        }
-        return null;
+        Project project=getProjectById(id);
+        project.setName(name);
+        return projectRepository.save(project);
     }
 
     @Override
     public String addEmployees(Long id, List<Long> employeeIds) {
-        Project project=projectRepository.findById(id).orElseThrow();
+        Project project=getProjectById(id);
         List<Employee> employeeList=project.getEmployees();
         for (Long employeeId:employeeIds){
             Employee employee=employeeService.getEmployeeById(employeeId);

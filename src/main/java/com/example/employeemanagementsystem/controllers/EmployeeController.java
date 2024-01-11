@@ -1,7 +1,7 @@
 package com.example.employeemanagementsystem.controllers;
 
 import com.example.employeemanagementsystem.models.Employee;
-import com.example.employeemanagementsystem.models.dtos.EmployeeDto;
+import com.example.employeemanagementsystem.models.dtos.EmployeeRequest;
 import com.example.employeemanagementsystem.services.EmployeeService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
@@ -26,12 +26,12 @@ public class EmployeeController {
             return employeeService.getEmployeeById(id);
     }
     @PostMapping("")
-    public Employee createEmployee(@Valid @RequestBody EmployeeDto employeeDto){
-        return employeeService.createEmployee(employeeDto);
+    public Employee createEmployee(@Valid @RequestBody EmployeeRequest employeeRequest){
+        return employeeService.createEmployee(employeeRequest);
     }
     @PutMapping("")
-    public Employee updateEmployee(@RequestBody EmployeeDto employeeDto){
-        return employeeService.updateEmployee(employeeDto);
+    public Employee updateEmployee(@RequestParam("id")Long id,@RequestBody EmployeeRequest employeeRequest){
+        return employeeService.updateEmployee(id,employeeRequest);
     }
     @DeleteMapping("")
     public String deleteEmployee(@RequestParam("id") Long id){

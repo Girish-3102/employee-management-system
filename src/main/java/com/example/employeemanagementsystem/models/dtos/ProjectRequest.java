@@ -12,7 +12,6 @@ import java.util.List;
 @Setter
 @Data
 public class ProjectRequest {
-    private Long id;
     private String name;
     private Long departmentId;
     private List<Long> employeeIds;
