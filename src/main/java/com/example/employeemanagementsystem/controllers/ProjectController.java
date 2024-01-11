@@ -36,6 +36,10 @@ public class ProjectController {
     public String addEmployees(@RequestParam("id")Long id,@RequestBody ProjectRequest projectRequest){
         return projectService.addEmployees(id,projectRequest.getEmployeeIds());
     }
+    @PatchMapping("/removeEmployee")
+    public String removeEmployee(@RequestParam("id")Long id,@RequestParam("employeeId")Long employeeId){
+        return projectService.removeEmployee(id,employeeId);
+    }
     @DeleteMapping
     public String deleteProject(@RequestParam("id") Long id){
         return projectService.deleteProjectById(id);

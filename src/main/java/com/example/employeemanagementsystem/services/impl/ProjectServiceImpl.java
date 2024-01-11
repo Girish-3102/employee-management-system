@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -62,18 +63,19 @@ public class ProjectServiceImpl implements ProjectService {
         project.setName(name);
         return projectRepository.save(project);
     }
-
     @Override
     public String addEmployees(Long id, List<Long> employeeIds) {
         Project project=getProjectById(id);
-        List<Employee> employeeList=project.getEmployees();
         for (Long employeeId:employeeIds){
-            Employee employee=employeeService.getEmployeeById(employeeId);
-            System.out.println(employee.getId());
-            employeeList.add(employee);
+            employeeService.assignProject(employeeId,project);
         }
-        project.setEmployees(employeeList);
-        projectRepository.save(project);
         return "Success";
+    }
+
+    @Override
+    public String removeEmployee(Long id, Long employeeId) {
+        Project project=getProjectById(id);
+        employeeService.unAssignProject(employeeId,project);
+        return "Successfully removed";
     }
 }
