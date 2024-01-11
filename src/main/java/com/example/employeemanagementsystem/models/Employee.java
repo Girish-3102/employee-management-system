@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -30,22 +31,19 @@ public class Employee {
     @JsonBackReference
     private Department department;
 
-    @ManyToMany(targetEntity = Project.class,mappedBy = "employees",cascade = {CascadeType.MERGE,CascadeType.PERSIST})
+    @ManyToMany(targetEntity = Project.class,cascade = {CascadeType.MERGE,CascadeType.PERSIST})
+    @JoinTable(
+            name = "employee_project",
+            joinColumns = @JoinColumn(name = "employee_id",referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "project_id",referencedColumnName = "id"))
     @JsonBackReference
-    private List<Project> project=new ArrayList<>();
+    private Set<Project> project;
 
-    public Employee(String firstName, String lastName, Department department,List<Project> projectList) {
+    public Employee(String firstName, String lastName, Department department,Set<Project> projectList) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.project=projectList;
         this.department = department;
     }
     public Employee(){}
-
-    @PreRemove
-    public void remove(){
-        for(Project p:project){
-            p.getEmployees().remove(this);
-        }
-    }
 }

@@ -2,6 +2,7 @@ package com.example.employeemanagementsystem.services.impl;
 
 import com.example.employeemanagementsystem.models.Department;
 import com.example.employeemanagementsystem.models.Employee;
+import com.example.employeemanagementsystem.models.Project;
 import com.example.employeemanagementsystem.models.dtos.EmployeeRequest;
 import com.example.employeemanagementsystem.models.mappers.EmployeeMapper;
 import com.example.employeemanagementsystem.repositories.EmployeeRepository;
@@ -60,14 +61,27 @@ public class EmployeeServiceImpl implements EmployeeService {
         if(employeeRequest.getDepartmentId()!=null) {
             Department department = departmentService.getDepartmentById(employeeRequest.getDepartmentId());
             employee.setDepartment(department);
-            employee.setProject(new ArrayList<>());
+            employee.getProject().clear();
         }
         return employeeRepository.save(employee);
     }
-
     @Override
     public String deleteEmployee(Long id) {
         employeeRepository.deleteById(id);
         return "Success";
+    }
+
+    @Override
+    public Employee assignProject(Long id, Project project) {
+        Employee employee=getEmployeeById(id);
+        employee.getProject().add(project);
+        return employeeRepository.save(employee);
+    }
+
+    @Override
+    public Employee unAssignProject(Long id, Project project) {
+        Employee employee=getEmployeeById(id);
+        employee.getProject().add(project);
+        return employeeRepository.save(employee);
     }
 }
