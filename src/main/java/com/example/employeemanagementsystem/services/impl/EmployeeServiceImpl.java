@@ -81,7 +81,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public Employee unAssignProject(Long id, Project project) {
         Employee employee=getEmployeeById(id);
-        employee.getProject().add(project);
+        employee.getProject().remove(project);
         return employeeRepository.save(employee);
     }
 }

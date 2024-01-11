@@ -63,7 +63,6 @@ public class ProjectServiceImpl implements ProjectService {
         project.setName(name);
         return projectRepository.save(project);
     }
-
     @Override
     public String addEmployees(Long id, List<Long> employeeIds) {
         Project project=getProjectById(id);
@@ -71,5 +70,12 @@ public class ProjectServiceImpl implements ProjectService {
             employeeService.assignProject(employeeId,project);
         }
         return "Success";
+    }
+
+    @Override
+    public String removeEmployee(Long id, Long employeeId) {
+        Project project=getProjectById(id);
+        employeeService.unAssignProject(employeeId,project);
+        return "Successfully removed";
     }
 }

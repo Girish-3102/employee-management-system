@@ -12,4 +12,6 @@ public interface ProjectService {
     String deleteProjectById(Long id);
     Project updateProject(Long id,String name);
     String addEmployees(Long id,List<Long> employeeIds);
+
+    String removeEmployee(Long id,Long employeeId);
 }
