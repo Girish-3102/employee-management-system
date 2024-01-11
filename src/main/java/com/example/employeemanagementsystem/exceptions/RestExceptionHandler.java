@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -47,7 +48,11 @@ public class RestExceptionHandler{
         ApiError apiError=new ApiError(BAD_REQUEST,"Please enter valid information.",errorDetails);
         return buildResponseEntity(apiError);
     }
-
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<Object> handleMissingServletRequestParameterException(MissingServletRequestParameterException ex) {
+        ApiError apiError=new ApiError(BAD_REQUEST,ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
     @ExceptionHandler(RuntimeException.class)
      public ResponseEntity<Object> handleRuntimeException(
             EntityNotFoundException ex) {
@@ -55,4 +60,5 @@ public class RestExceptionHandler{
         apiError.setMessage("Sorry, We will fix it soon!");
         return buildResponseEntity(apiError);
     }
+
 }
