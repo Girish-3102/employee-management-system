@@ -3,7 +3,8 @@ package com.example.employeemanagementsystem.services.impl;
 import com.example.employeemanagementsystem.models.Department;
 import com.example.employeemanagementsystem.models.Employee;
 import com.example.employeemanagementsystem.models.Project;
-import com.example.employeemanagementsystem.models.dtos.EmployeeRequest;
+import com.example.employeemanagementsystem.models.dtos.EmployeeDto;
+import com.example.employeemanagementsystem.models.mappers.EmployeeMapper;
 import com.example.employeemanagementsystem.repositories.EmployeeRepository;
 import com.example.employeemanagementsystem.repositories.ProjectRepository;
 import com.example.employeemanagementsystem.services.DepartmentService;
@@ -12,21 +13,20 @@ import com.example.employeemanagementsystem.services.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
     @Autowired private EmployeeRepository employeeRepository;
-    @Autowired private ProjectRepository projectRepository;
     @Autowired private DepartmentService departmentService;
-
-    @Autowired private ProjectService projectService;
+    @Autowired private EmployeeMapper employeeMapper;
     @Override
-    public Employee createEmployee(EmployeeRequest employeeRequest) {
-        Department department=departmentService.getDepartmentById(employeeRequest.getDepartmentId());
+    public Employee createEmployee(EmployeeDto employeeDto) {
+        Department department=departmentService.getDepartmentById(employeeDto.getDepartmentId());
         Employee employee=new Employee();
-        employee.setFirstName(employeeRequest.getFirstName());
-        employee.setLastName(employeeRequest.getLastName());
+        employee.setFirstName(employeeDto.getFirstName());
+        employee.setLastName(employeeDto.getLastName());
         employee.setDepartment(department);
         return employeeRepository.save(employee);
     }
@@ -42,18 +42,13 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public Employee updateEmployee(EmployeeRequest employeeRequest){
-        Employee employee=employeeRepository.findById(employeeRequest.getId()).orElse(null);
-        if(employeeRequest.getDepartmentId()!=null) {
-            Department department = departmentService.getDepartmentById(employeeRequest.getDepartmentId());
-            assert employee != null;
+    public Employee updateEmployee(EmployeeDto employeeDto){
+        Employee employee=employeeRepository.findById(employeeDto.getId()).orElseThrow();
+        employeeMapper.updateEmployeeFromDto(employeeDto,employee);
+        if(employeeDto.getDepartmentId()!=null) {
+            Department department = departmentService.getDepartmentById(employeeDto.getDepartmentId());
             employee.setDepartment(department);
-        }
-        if(employeeRequest.getProjectId()!=null){
-            Project project =projectService.getProjectById(employeeRequest.getProjectId());
-            List<Project> projectList=employee.getProject();
-            projectList.add(project);
-            employee.setProject(projectList);
+            employee.setProject(new ArrayList<>());
         }
         return employeeRepository.save(employee);
     }
@@ -67,4 +62,5 @@ public class EmployeeServiceImpl implements EmployeeService {
             return e.getMessage();
         }
     }
+
 }

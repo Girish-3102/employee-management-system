@@ -9,16 +9,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @Data
-public class EmployeeRequest {
+public class EmployeeDto {
     private Long id;
-    @NotEmpty
     private String firstName;
-    @NotEmpty
     private String lastName;
-
-    @NotNull
     private Long departmentId;
-
-    private Long projectId;
-
 }

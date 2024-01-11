@@ -43,6 +43,13 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    public Department updateDepartmentName(Long id, String name) {
+        Department department=departmentRepository.findById(id).orElseThrow();
+        department.setName(name);
+        return department;
+    }
+
+    @Override
     public String deleteDepartmentById(Long id) {
         try{
             departmentRepository.deleteById(id);

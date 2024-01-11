@@ -26,6 +26,15 @@ public class ProjectController {
     public Project createProject(@RequestBody ProjectRequest projectRequest){
         return projectService.createProject(projectRequest);
     }
+
+    @PutMapping("")
+    public Project updateProject(@RequestBody ProjectRequest projectRequest){
+        return projectService.updateProject(projectRequest.getId(),projectRequest.getName());
+    }
+    @PutMapping("addEmployees")
+    public String addEmployees(@RequestBody ProjectRequest projectRequest){
+        return projectService.addEmployees(projectRequest.getId(),projectRequest.getEmployeeIds());
+    }
     @DeleteMapping
     public String deleteProject(@RequestParam("id") Long id){
         return projectService.deleteProjectById(id);
