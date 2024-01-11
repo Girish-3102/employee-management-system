@@ -4,6 +4,7 @@ package com.example.employeemanagementsystem.controllers;
 import com.example.employeemanagementsystem.models.Project;
 import com.example.employeemanagementsystem.models.dtos.ProjectRequest;
 import com.example.employeemanagementsystem.services.ProjectService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,7 +24,7 @@ public class ProjectController {
         return projectService.getProjectById(id);
     }
     @PostMapping("")
-    public Project createProject(@RequestBody ProjectRequest projectRequest){
+    public Project createProject(@Valid @RequestBody ProjectRequest projectRequest){
         return projectService.createProject(projectRequest);
     }
 

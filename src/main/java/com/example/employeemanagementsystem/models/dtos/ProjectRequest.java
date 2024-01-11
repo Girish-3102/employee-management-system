@@ -12,7 +12,9 @@ import java.util.List;
 @Setter
 @Data
 public class ProjectRequest {
+    @NotEmpty(message = "Project name cannot be empty")
     private String name;
+    @NotNull(message = "Department ID cannot be null")
     private Long departmentId;
     private List<Long> employeeIds;
 }
