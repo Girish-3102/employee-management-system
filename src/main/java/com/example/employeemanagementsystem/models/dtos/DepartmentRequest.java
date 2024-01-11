@@ -9,6 +9,6 @@ import lombok.Setter;
 @Setter
 @Data
 public class DepartmentRequest {
-    @NotEmpty
+    @NotEmpty(message = "The department name cannot be empty")
     private String name;
 }

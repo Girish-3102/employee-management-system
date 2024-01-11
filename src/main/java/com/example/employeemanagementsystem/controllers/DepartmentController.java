@@ -31,7 +31,7 @@ public class DepartmentController {
         return departmentService.createDepartment(departmentRequest);
     }
     @PutMapping
-    public Department updateDepartment(@RequestParam("id") Long id,@RequestBody DepartmentRequest departmentRequest){
+    public Department updateDepartment(@RequestParam("id") Long id,@Valid @RequestBody DepartmentRequest departmentRequest){
         return departmentService.updateDepartmentName(id,departmentRequest.getName());
     }
     @DeleteMapping
