@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -23,12 +24,12 @@ public class Department {
 
     @OneToMany(mappedBy = "department", cascade = CascadeType.PERSIST)
     @JsonManagedReference
-    private List<Employee> employees=new ArrayList<>();
+    private Set<Employee> employees;
 
 
     @OneToMany(mappedBy = "department", cascade = CascadeType.ALL)
     @JsonManagedReference
-    private List<Project> projects=new ArrayList<>();
+    private Set<Project> projects;
 
     @PreRemove
     private void remove(){

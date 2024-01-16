@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class DepartmentServiceImpl implements DepartmentService {
@@ -27,12 +28,12 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public List<Project> getAllProjectsByDepartmentId(Long id) {
+    public Set<Project> getAllProjectsByDepartmentId(Long id) {
         return getDepartmentById(id).getProjects();
     }
 
     @Override
-    public List<Employee> getAllEmployeesByDepartmentId(Long id) {
+    public Set<Employee> getAllEmployeesByDepartmentId(Long id) {
         return getDepartmentById(id).getEmployees();
     }
 

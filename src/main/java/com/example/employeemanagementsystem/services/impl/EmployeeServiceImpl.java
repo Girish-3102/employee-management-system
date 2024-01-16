@@ -32,8 +32,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     public Employee createEmployee(EmployeeRequest employeeRequest) {
         Department department=departmentService.getDepartmentById(employeeRequest.getDepartmentId());
         Employee employee=new Employee();
-        employee.setFirstName(employeeRequest.getFirstName());
-        employee.setLastName(employeeRequest.getLastName());
+        employeeMapper.updateEmployeeFromDto(employeeRequest,employee);
         employee.setDepartment(department);
         return employeeRepository.save(employee);
     }
