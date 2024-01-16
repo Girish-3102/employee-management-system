@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -30,7 +31,7 @@ public class Project {
 
     @ManyToMany(targetEntity = Employee.class,mappedBy = "project",cascade =  {CascadeType.MERGE,CascadeType.PERSIST})
     @JsonManagedReference
-    private Set<Employee> employees;
+    private Set<Employee> employees=new HashSet<>();
 
     public Project(String name, Department department) {
         this.name = name;
