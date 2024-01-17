@@ -10,8 +10,6 @@ import java.util.Set;
 
 public interface DepartmentService {
     List<Department> getAllDepartments();
-    Set<Project> getAllProjectsByDepartmentId(Long id);
-    Set<Employee> getAllEmployeesByDepartmentId(Long id);
     Department createDepartment(DepartmentRequest departmentRequest);
     Department getDepartmentById(Long id);
     String deleteDepartmentById(Long id);
