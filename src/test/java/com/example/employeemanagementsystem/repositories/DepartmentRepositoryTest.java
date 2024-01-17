@@ -1,6 +1,7 @@
 package com.example.employeemanagementsystem.repositories;
 import com.example.employeemanagementsystem.models.Department;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
@@ -13,19 +14,27 @@ import java.util.Optional;
 @DataJpaTest
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
 public class DepartmentRepositoryTest {
-    @Autowired private DepartmentRepository departmentRepository;
+    private final DepartmentRepository departmentRepository;
+    private Department department;
+
+    @BeforeEach
+    public void before(){
+        department=new Department("OMS");
+    }
+    @Autowired
+    public DepartmentRepositoryTest(DepartmentRepository departmentRepository) {
+        this.departmentRepository = departmentRepository;
+    }
 
     @Test
     public void DepartmentRepository_SaveDepartment_ReturnsSavedDepartment(){
-        Department department=new Department("OMS");
-        departmentRepository.save(department);
-        Assertions.assertThat(department).isNotNull();
-        Assertions.assertThat(department.getId()).isGreaterThan(0);
+        Department savedDepartment=departmentRepository.save(department);
+        Assertions.assertThat(savedDepartment).isNotNull();
+        Assertions.assertThat(savedDepartment.getId()).isGreaterThan(0);
     }
 
     @Test
     public void DepartmentRepository_GetAllDepartments_ReturnsDepartmentList(){
-        Department department=new Department("OMS");
         Department department2=new Department("TENET");
         departmentRepository.save(department);
         departmentRepository.save(department2);
@@ -35,14 +44,12 @@ public class DepartmentRepositoryTest {
     }
     @Test
     public void DepartmentRepository_GetDepartmentById_ReturnsDepartment(){
-        Department department=new Department("OMS");
         departmentRepository.save(department);
         Department savedDepartment=departmentRepository.findById(department.getId()).get();
         Assertions.assertThat(savedDepartment).isNotNull();
     }
     @Test
     public void DepartmentRepository_UpdateDepartmentById_ReturnsDepartment(){
-        Department department=new Department("OMS");
         departmentRepository.save(department);
         Department savedDepartment=departmentRepository.findById(department.getId()).get();
         savedDepartment.setName("Doraemon");
@@ -51,10 +58,10 @@ public class DepartmentRepositoryTest {
     }
     @Test
     public void DepartmentRepository_DeleteDepartment(){
-        Department department=new Department("OMS");
         Department savedDepartment=departmentRepository.save(department);
         departmentRepository.deleteById(savedDepartment.getId());
         Optional<Department> optionalDepartment=departmentRepository.findById(savedDepartment.getId());
         Assertions.assertThat(optionalDepartment).isEmpty();
     }
+
 }
