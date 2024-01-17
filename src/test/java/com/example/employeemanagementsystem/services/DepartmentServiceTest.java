@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,8 +35,7 @@ public class DepartmentServiceTest {
     }
     @Test
     public void DepartmentService_CreateDepartment_ReturnsDepartment(){
-        Department department=new Department(departmentRequest.getName());
-        when(departmentRepository.save(Mockito.any(Department.class))).thenReturn(department);
+        when(departmentRepository.save(Mockito.any(Department.class))).then(returnsFirstArg());
 
         Department savedDepartment=departmentService.createDepartment(departmentRequest);
 
