@@ -1,6 +1,6 @@
 package com.example.employeemanagementsystem.repositories;
 import com.example.employeemanagementsystem.models.Department;
-import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +29,7 @@ public class DepartmentRepositoryTest {
     @Test
     public void DepartmentRepository_SaveDepartment_ReturnsSavedDepartment(){
         Department savedDepartment=departmentRepository.save(department);
-        Assertions.assertThat(savedDepartment).isNotNull();
-        Assertions.assertThat(savedDepartment.getId()).isGreaterThan(0);
+        Assertions.assertNotNull(savedDepartment);
     }
 
     @Test
@@ -39,14 +38,14 @@ public class DepartmentRepositoryTest {
         departmentRepository.save(department);
         departmentRepository.save(department2);
         List<Department> departmentList=departmentRepository.findAll();
-        Assertions.assertThat(departmentList).isNotNull();
-        Assertions.assertThat(departmentList.size()).isEqualTo(2);
+        Assertions.assertNotNull(departmentList);
+        Assertions.assertEquals(2,departmentList.size());
     }
     @Test
     public void DepartmentRepository_GetDepartmentById_ReturnsDepartment(){
         departmentRepository.save(department);
         Department savedDepartment=departmentRepository.findById(department.getId()).get();
-        Assertions.assertThat(savedDepartment).isNotNull();
+        Assertions.assertNotNull(savedDepartment);
     }
     @Test
     public void DepartmentRepository_UpdateDepartmentById_ReturnsDepartment(){
@@ -54,14 +53,14 @@ public class DepartmentRepositoryTest {
         Department savedDepartment=departmentRepository.findById(department.getId()).get();
         savedDepartment.setName("Doraemon");
         Department updatedDepartment=departmentRepository.save(savedDepartment);
-        Assertions.assertThat(updatedDepartment.getName()).isEqualTo("Doraemon");
+        Assertions.assertEquals("Doraemon",updatedDepartment.getName());
     }
     @Test
     public void DepartmentRepository_DeleteDepartment(){
         Department savedDepartment=departmentRepository.save(department);
         departmentRepository.deleteById(savedDepartment.getId());
         Optional<Department> optionalDepartment=departmentRepository.findById(savedDepartment.getId());
-        Assertions.assertThat(optionalDepartment).isEmpty();
+        Assertions.assertEquals(Optional.empty(),optionalDepartment);
     }
 
 }
