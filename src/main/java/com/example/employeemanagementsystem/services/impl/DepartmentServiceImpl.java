@@ -28,16 +28,6 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public Set<Project> getAllProjectsByDepartmentId(Long id) {
-        return getDepartmentById(id).getProjects();
-    }
-
-    @Override
-    public Set<Employee> getAllEmployeesByDepartmentId(Long id) {
-        return getDepartmentById(id).getEmployees();
-    }
-
-    @Override
     public Department createDepartment(DepartmentRequest departmentRequest) {
         return departmentRepository.save(new Department(departmentRequest.getName()));
     }
