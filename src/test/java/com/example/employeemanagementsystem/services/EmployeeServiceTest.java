@@ -8,6 +8,7 @@ import com.example.employeemanagementsystem.models.dtos.EmployeeRequest;
 import com.example.employeemanagementsystem.models.mappers.EmployeeMapper;
 import com.example.employeemanagementsystem.repositories.EmployeeRepository;
 import com.example.employeemanagementsystem.services.impl.EmployeeServiceImpl;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,7 +32,7 @@ public class EmployeeServiceTest {
     private DepartmentService departmentService;
     @Mock
     private EmployeeRepository employeeRepository;
-    @Mock
+    @Spy
     EmployeeMapper employeeMapper= Mappers.getMapper(EmployeeMapper.class);
     @InjectMocks
     private EmployeeServiceImpl employeeService;
@@ -80,6 +81,15 @@ public class EmployeeServiceTest {
         //Assert
         Assertions.assertNotNull(savedEmployee);
         Assertions.assertEquals(employeeId,savedEmployee.getId());
+    }
+
+    @Test
+    public void EmployeeService_AccessEmployeeNotPresent_ThrowsException(){
+        Long employeeId=1L;
+        when(employeeRepository.findById(employeeId)).thenReturn(Optional.empty());
+        Assertions.assertThrows(EntityNotFoundException.class,()->{
+            employeeService.getEmployeeById(employeeId);
+        });
     }
 
     @Test
