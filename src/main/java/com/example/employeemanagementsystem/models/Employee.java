@@ -38,7 +38,7 @@ public class Employee {
             joinColumns = @JoinColumn(name = "employee_id",referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "project_id",referencedColumnName = "id"))
     @JsonBackReference
-    private Set<Project> project = new HashSet<>();
+    private Set<Project> project=new HashSet<>();
 
     public Employee(String firstName, String lastName, Department department,Set<Project> projectList) {
         this.firstName = firstName;
