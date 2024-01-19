@@ -4,6 +4,7 @@ import com.example.employeemanagementsystem.models.Department;
 import com.example.employeemanagementsystem.models.dtos.DepartmentRequest;
 import com.example.employeemanagementsystem.services.DepartmentService;
 import com.example.employeemanagementsystem.utils.TestUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +31,20 @@ public class DepartmentControllerTest {
 
     @MockBean DepartmentService departmentService;
 
+    private Department department;
+    private DepartmentRequest departmentRequest;
+    private Long departmentId;
+
+    @BeforeEach
+    public void setUpData(){
+        departmentRequest=new DepartmentRequest("OMS");
+        departmentId=1L;
+        department=new Department("OMS");
+        department.setId(departmentId);
+    }
+
     @Test
     public void DepartmentControllerTest_GetAllDepartments_ReturnsDepartmentListJson() throws Exception{
-        Department department=new Department("OMS");
         when(departmentService.getAllDepartments()).thenReturn(List.of(department));
         mockMvc.perform(get("/department")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -43,8 +55,6 @@ public class DepartmentControllerTest {
 
     @Test
     public void DepartmentControllerTest_GetDepartmentById_ReturnsDepartmentJson() throws Exception{
-        Department department=new Department("OMS");
-        Long departmentId=1L;
         when(departmentService.getDepartmentById(departmentId)).thenReturn(department);
         mockMvc.perform(get("/department/{id}",departmentId).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -53,21 +63,27 @@ public class DepartmentControllerTest {
 
     @Test
     public void DepartmentControllerTest_PostDepartment_ReturnsDepartmentJson() throws Exception{
-        Department department=new Department("OMS");
-        Long departmentId=1L;
         when(departmentService.createDepartment(any(DepartmentRequest.class))).thenReturn(department);
         mockMvc.perform(post("/department")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(TestUtils.convertObjectToJson(new DepartmentRequest("OMS")))
+                        .content(TestUtils.convertObjectToJson(departmentRequest))
                 ).andExpect(status().isOk())
-                .andExpect(jsonPath("$.name",is(department.getName())));
+                .andExpect(jsonPath("$.name",is(departmentRequest.getName())));
     }
+
+    @Test
+    public void DepartmentControllerTest_PostDepartmentWithInvalidName_ReturnsDepartmentJson() throws Exception{
+        mockMvc.perform(post("/department")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{}")
+                ).andExpect(status().isBadRequest());
+    }
+
     @Test
     public void DepartmentControllerTest_PutDepartment_ReturnsDepartmentJson() throws Exception{
-        Department department=new Department("CMS");
-        Long departmentId=1L;
+        department.setName("CMS");
         when(departmentService.updateDepartmentName(eq(departmentId),anyString())).thenReturn(department);
-        DepartmentRequest departmentRequest=new DepartmentRequest("CMS");
+        departmentRequest.setName("CMS");
         mockMvc.perform(put("/department")
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("id", String.valueOf(departmentId))
@@ -80,8 +96,16 @@ public class DepartmentControllerTest {
     }
 
     @Test
+    public void DepartmentControllerTest_PutDepartmentWithInvalidName_ReturnsDepartmentJson() throws Exception{
+        mockMvc.perform(put("/department")
+                .contentType(MediaType.APPLICATION_JSON)
+                .param("id", String.valueOf(departmentId))
+                .content("{}")
+        ).andExpect(status().isBadRequest());
+    }
+
+    @Test
     public void DepartmentControllerTest_DeleteDepartment_ReturnsString() throws Exception{
-        Long departmentId=1L;
         when(departmentService.deleteDepartmentById(eq(departmentId))).thenReturn("Success");
         mockMvc.perform(delete("/department")
                         .contentType(MediaType.APPLICATION_JSON)
