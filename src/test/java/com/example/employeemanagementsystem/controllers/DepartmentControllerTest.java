@@ -4,6 +4,7 @@ import com.example.employeemanagementsystem.models.Department;
 import com.example.employeemanagementsystem.models.dtos.DepartmentRequest;
 import com.example.employeemanagementsystem.services.DepartmentService;
 import com.example.employeemanagementsystem.utils.TestUtils;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -62,6 +63,13 @@ public class DepartmentControllerTest {
     }
 
     @Test
+    public void DepartmentControllerTest_GetDepartmentNotPresent_ReturnsNotFound() throws Exception{
+        when(departmentService.getDepartmentById(departmentId)).thenThrow(EntityNotFoundException.class);
+        mockMvc.perform(get("/department/{id}",departmentId).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     public void DepartmentControllerTest_PostDepartment_ReturnsDepartmentJson() throws Exception{
         when(departmentService.createDepartment(any(DepartmentRequest.class))).thenReturn(department);
         mockMvc.perform(post("/department")
@@ -72,7 +80,7 @@ public class DepartmentControllerTest {
     }
 
     @Test
-    public void DepartmentControllerTest_PostDepartmentWithInvalidName_ReturnsDepartmentJson() throws Exception{
+    public void DepartmentControllerTest_PostDepartmentWithInvalidName_ReturnsBadRequest() throws Exception{
         mockMvc.perform(post("/department")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{}")
@@ -94,7 +102,15 @@ public class DepartmentControllerTest {
                 .andExpect(jsonPath("$.name",is(departmentRequest.getName())));
         ;
     }
-
+    @Test
+    public void DepartmentControllerTest_PutDepartmentNotPresent_ReturnsNotFound() throws Exception{
+        when(departmentService.updateDepartmentName(eq(departmentId),any())).thenThrow(EntityNotFoundException.class);
+        mockMvc.perform(put("/department")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("id", String.valueOf(departmentId))
+                        .content(TestUtils.convertObjectToJson(departmentRequest))
+                ).andExpect(status().isNotFound());
+    }
     @Test
     public void DepartmentControllerTest_PutDepartmentWithInvalidName_ReturnsDepartmentJson() throws Exception{
         mockMvc.perform(put("/department")
@@ -113,6 +129,5 @@ public class DepartmentControllerTest {
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$",is("Success")));
-        ;
     }
 }
