@@ -1,6 +1,7 @@
 package com.example.employeemanagementsystem.services;
 
 
+import com.example.employeemanagementsystem.exceptions.DifferentDepartmentException;
 import com.example.employeemanagementsystem.models.Department;
 import com.example.employeemanagementsystem.models.Employee;
 import com.example.employeemanagementsystem.models.Project;
@@ -149,6 +150,16 @@ public class EmployeeServiceTest {
         Assertions.assertNotNull(savedEmployee);
         Assertions.assertEquals(2,savedEmployee.getProject().size());
         Assertions.assertTrue(savedEmployee.getProject().contains(project));
+    }
+
+    @Test
+    public void EmployeeService_AssignProjectWithDifferentDepartment_ThrowsException(){
+        employee.setDepartment(department);
+        when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
+        Department differentDepartment=new Department("IMS");
+        differentDepartment.setId(2L);
+        Project project=new Project("Security",differentDepartment);
+        Assertions.assertThrows(DifferentDepartmentException.class,()->employeeService.assignProject(employeeId,project));
     }
     @Test
     public void EmployeeService_UnAssignProject_ReturnsEmployee(){

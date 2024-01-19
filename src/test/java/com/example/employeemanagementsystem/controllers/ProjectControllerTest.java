@@ -1,5 +1,6 @@
 package com.example.employeemanagementsystem.controllers;
 
+import com.example.employeemanagementsystem.exceptions.DifferentDepartmentException;
 import com.example.employeemanagementsystem.models.Project;
 import com.example.employeemanagementsystem.models.dtos.ProjectRequest;
 import com.example.employeemanagementsystem.services.ProjectService;
@@ -132,6 +133,17 @@ public class ProjectControllerTest {
                         .param("id", String.valueOf(projectId))
                         .content(TestUtils.convertObjectToJson(projectRequest)))
                 .andExpect(status().isNotFound());
+    }
+    @Test
+    public void ProjectController_AddEmployeesButDifferentDepartment_ReturnsNotFound() throws Exception{
+        List<Long> employeeIds=new ArrayList<>(List.of(1L,2L));
+        projectRequest.setEmployeeIds(employeeIds);
+        when(projectService.addEmployees(projectId,employeeIds)).thenThrow(DifferentDepartmentException.class);
+        mockMvc.perform(put("/project/addEmployees")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("id", String.valueOf(projectId))
+                        .content(TestUtils.convertObjectToJson(projectRequest)))
+                .andExpect(status().isBadRequest());
     }
     @Test
     public void ProjectController_AddEmployees_ReturnsString() throws Exception{
