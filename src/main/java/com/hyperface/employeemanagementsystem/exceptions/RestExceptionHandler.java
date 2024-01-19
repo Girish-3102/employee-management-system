@@ -26,6 +26,14 @@ public class RestExceptionHandler{
         return buildResponseEntity(apiError);
     }
 
+    @ExceptionHandler(DifferentDepartmentException.class)
+    public ResponseEntity<Object> handleDepartmentNotMatch(
+            DifferentDepartmentException ex) {
+        ApiError apiError = new ApiError(BAD_REQUEST);
+        apiError.setMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
         List<String> errorDetails = new ArrayList<>();
@@ -36,6 +44,7 @@ public class RestExceptionHandler{
         ApiError apiError=new ApiError(BAD_REQUEST,"Please enter valid information.",errorDetails);
         return buildResponseEntity(apiError);
     }
+
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<Object> handleMissingServletRequestParameterException(MissingServletRequestParameterException ex) {
         ApiError apiError=new ApiError(BAD_REQUEST,ex.getMessage());

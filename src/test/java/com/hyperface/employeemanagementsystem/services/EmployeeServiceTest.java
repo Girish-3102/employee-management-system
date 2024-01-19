@@ -1,6 +1,6 @@
 package com.hyperface.employeemanagementsystem.services;
 
-
+import com.hyperface.employeemanagementsystem.exceptions.DifferentDepartmentException;
 import com.hyperface.employeemanagementsystem.models.Department;
 import com.hyperface.employeemanagementsystem.models.Employee;
 import com.hyperface.employeemanagementsystem.models.Project;
@@ -147,6 +147,16 @@ public class EmployeeServiceTest {
         Assertions.assertNotNull(savedEmployee);
         Assertions.assertEquals(2,savedEmployee.getProject().size());
         Assertions.assertTrue(savedEmployee.getProject().contains(project));
+    }
+
+    @Test
+    public void EmployeeService_AssignProjectWithDifferentDepartment_ThrowsException(){
+        employee.setDepartment(department);
+        when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
+        Department differentDepartment=new Department("IMS");
+        differentDepartment.setId(2L);
+        Project project=new Project("Security",differentDepartment);
+        Assertions.assertThrows(DifferentDepartmentException.class,()->employeeService.assignProject(employeeId,project));
     }
     @Test
     public void EmployeeService_UnAssignProject_ReturnsEmployee(){

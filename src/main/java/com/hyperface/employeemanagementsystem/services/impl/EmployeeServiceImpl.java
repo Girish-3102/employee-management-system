@@ -1,5 +1,5 @@
 package com.hyperface.employeemanagementsystem.services.impl;
-
+import com.hyperface.employeemanagementsystem.exceptions.DifferentDepartmentException;
 import com.hyperface.employeemanagementsystem.models.Department;
 import com.hyperface.employeemanagementsystem.models.Employee;
 import com.hyperface.employeemanagementsystem.models.Project;
@@ -71,6 +71,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public Employee assignProject(Long id, Project project) {
         Employee employee=getEmployeeById(id);
+        if(!employee.getDepartment().getId().equals(project.getDepartment().getId())){
+          throw new DifferentDepartmentException("Employee with ID"+id+" cannot be assigned due to different department");
+        }
         employee.getProject().add(project);
         return employeeRepository.save(employee);
     }
