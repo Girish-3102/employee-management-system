@@ -29,9 +29,14 @@ public class DepartmentServiceTest {
     private DepartmentServiceImpl departmentService;
 
     private DepartmentRequest departmentRequest;
+    private Department department;
+    private Long departmentId;
     @BeforeEach
     void setUpData(){
         departmentRequest=new DepartmentRequest("OMS");
+        department = new Department("OMS");
+        departmentId=1L;
+        department.setId(departmentId);
     }
     @Test
     public void DepartmentService_CreateDepartment_ReturnsDepartment(){
@@ -45,26 +50,20 @@ public class DepartmentServiceTest {
 
     @Test
     public void DepartmentService_GetAllDepartments_ReturnsDepartmentList(){
-        Department department=new Department(departmentRequest.getName());
-        Department department1=new Department("TENET");
         List<Department> departmentList=new ArrayList<>();
-        departmentList.add(department1);
         departmentList.add(department);
-
         when(departmentRepository.findAll()).thenReturn(departmentList);
         List<Department> savedDepartmentList=departmentService.getAllDepartments();
-
         Assertions.assertNotNull(savedDepartmentList);
+        Assertions.assertEquals(1,savedDepartmentList.size());
     }
 
     @Test
     public void DepartmentService_GetDepartmentById_ReturnsDepartment(){
-        Long departmentId=1L;
-        Department department=new Department(departmentRequest.getName());
-        department.setId(departmentId);
         when(departmentRepository.findById(departmentId)).thenReturn(Optional.of(department));
         Department savedDepartment=departmentService.getDepartmentById(departmentId);
         Assertions.assertNotNull(savedDepartment);
+        Assertions.assertEquals(departmentId,savedDepartment.getId());
     }
     @Test
     public void DepartmentService_AccessingDepartmentNotPresent_ThrowsException(){
@@ -75,18 +74,15 @@ public class DepartmentServiceTest {
 
     @Test
     public void DepartmentService_UpdateDepartment_ReturnsDepartment(){
-        Long departmentId=1L;
-        Department department=new Department("TENET");
         when(departmentRepository.findById(departmentId)).thenReturn(Optional.of(department));
-        when(departmentRepository.save(Mockito.any(Department.class))).thenReturn(department);
-        Department updatedDepartment=departmentService.updateDepartmentName(departmentId,"OMS");
+        when(departmentRepository.save(Mockito.any(Department.class))).then(returnsFirstArg());
+        Department updatedDepartment=departmentService.updateDepartmentName(departmentId,"TENET");
         Assertions.assertNotNull(updatedDepartment);
-        Assertions.assertEquals("OMS",updatedDepartment.getName());
+        Assertions.assertEquals("TENET",updatedDepartment.getName());
     }
 
     @Test
     public void DepartmentService_DeleteDepartment(){
-        Long departmentId=1L;
         departmentService.deleteDepartmentById(departmentId);
         verify(departmentRepository,times(1)).deleteById(departmentId);
     }
