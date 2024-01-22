@@ -1,6 +1,5 @@
 package com.hyperface.employeemanagementsystem.services;
 
-import com.hyperface.employeemanagementsystem.exceptions.DifferentDepartmentException;
 import com.hyperface.employeemanagementsystem.models.Department;
 import com.hyperface.employeemanagementsystem.models.Employee;
 import com.hyperface.employeemanagementsystem.models.Project;

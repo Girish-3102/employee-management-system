@@ -1,4 +1,4 @@
-package com.hyperface.employeemanagementsystem.services;
+package com.hyperface.employeemanagementsystem.services.impl;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -6,6 +6,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
@@ -14,9 +15,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 
+
+@Service
 public class JwtService {
 
-    private final String SECRET_KEY="R2d3w5ThHJ8p/u/sxyv3Q2F2AYqddKuA5FA/wThsIys=";
+    private String SECRET_KEY="R2d3w5ThHJ8p/u/sxyv3Q2F2AYqddKuA5FA/wThsIys=";
     public String extractUserName(String token){
         return extractClaim(token,Claims::getSubject);
     }
@@ -58,7 +61,7 @@ public class JwtService {
                 .addClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis()+1000*60))
+                .setExpiration(new Date(System.currentTimeMillis()+1000*60*60))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }

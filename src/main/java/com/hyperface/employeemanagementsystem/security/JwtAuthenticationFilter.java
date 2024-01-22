@@ -1,6 +1,6 @@
 package com.hyperface.employeemanagementsystem.security;
 
-import com.hyperface.employeemanagementsystem.services.JwtService;
+import com.hyperface.employeemanagementsystem.services.impl.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
