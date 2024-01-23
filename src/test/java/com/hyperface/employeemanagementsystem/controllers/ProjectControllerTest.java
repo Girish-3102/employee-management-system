@@ -1,4 +1,5 @@
 package com.hyperface.employeemanagementsystem.controllers;
+import com.hyperface.employeemanagementsystem.exceptions.DifferentDepartmentException;
 import com.hyperface.employeemanagementsystem.models.Project;
 import com.hyperface.employeemanagementsystem.models.dtos.ProjectRequest;
 import com.hyperface.employeemanagementsystem.services.ProjectService;
