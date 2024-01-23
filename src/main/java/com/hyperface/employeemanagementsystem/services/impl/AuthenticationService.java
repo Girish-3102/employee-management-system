@@ -30,8 +30,6 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
 
     public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) throws EntityNotFoundException{
-            System.out.println(authenticationRequest.getPassword());
-            System.out.println(authenticationRequest.getUsername());
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             authenticationRequest.getUsername(),
