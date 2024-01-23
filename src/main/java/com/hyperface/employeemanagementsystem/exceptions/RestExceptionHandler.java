@@ -2,6 +2,7 @@ package com.hyperface.employeemanagementsystem.exceptions;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -22,6 +23,14 @@ public class RestExceptionHandler{
     public ResponseEntity<Object> handleEntityNotFound(
             EntityNotFoundException ex) {
         ApiError apiError = new ApiError(NOT_FOUND);
+        apiError.setMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
+
+    @ExceptionHandler(InternalAuthenticationServiceException.class)
+    public ResponseEntity<Object> handleEntityNotFound(
+            InternalAuthenticationServiceException ex) {
+        ApiError apiError = new ApiError(UNAUTHORIZED);
         apiError.setMessage(ex.getMessage());
         return buildResponseEntity(apiError);
     }
@@ -52,7 +61,7 @@ public class RestExceptionHandler{
     }
     @ExceptionHandler(RuntimeException.class)
      public ResponseEntity<Object> handleRuntimeException(
-            EntityNotFoundException ex) {
+            RuntimeException ex) {
         ApiError apiError = new ApiError(INTERNAL_SERVER_ERROR);
         apiError.setMessage("Sorry, We will fix it soon!");
         return buildResponseEntity(apiError);

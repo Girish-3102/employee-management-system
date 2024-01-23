@@ -5,6 +5,7 @@ import com.hyperface.employeemanagementsystem.models.dtos.AuthenticationRequest;
 import com.hyperface.employeemanagementsystem.models.dtos.AuthenticationResponse;
 import com.hyperface.employeemanagementsystem.models.dtos.RegisterRequest;
 import com.hyperface.employeemanagementsystem.services.impl.AuthenticationService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,14 +22,14 @@ public class AuthController {
 
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(
-            @RequestBody AuthenticationRequest authenticationRequest
+            @Valid @RequestBody AuthenticationRequest authenticationRequest
     ){
         return ResponseEntity.ok(authenticationService.authenticate(authenticationRequest));
     }
 
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> authenticate(
-            @RequestBody RegisterRequest registerRequest
+           @Valid @RequestBody RegisterRequest registerRequest
     ){
         return ResponseEntity.ok(authenticationService.register(registerRequest));
     }

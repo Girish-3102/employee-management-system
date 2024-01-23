@@ -11,10 +11,14 @@ import com.hyperface.employeemanagementsystem.models.dtos.RegisterRequest;
 import com.hyperface.employeemanagementsystem.models.mappers.EmployeeMapper;
 import com.hyperface.employeemanagementsystem.repositories.UserRepository;
 import com.hyperface.employeemanagementsystem.services.EmployeeService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Arrays;
 
 @Service
 @RequiredArgsConstructor
@@ -23,17 +27,20 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final EmployeeService employeeService;
+    private final PasswordEncoder passwordEncoder;
 
-    public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        authenticationRequest.getUsername(),
-                        authenticationRequest.getPassword()
-                )
-        );
-        UserAuth userAuth=userRepository.findByEmail(authenticationRequest.getUsername()).orElseThrow();
-        String jwtToken=jwtService.generateToken(userAuth);
-        return AuthenticationResponse.builder().token(jwtToken).build();
+    public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) throws EntityNotFoundException{
+            System.out.println(authenticationRequest.getPassword());
+            System.out.println(authenticationRequest.getUsername());
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            authenticationRequest.getUsername(),
+                            authenticationRequest.getPassword()
+                    )
+            );
+            UserAuth userAuth = userRepository.findByEmail(authenticationRequest.getUsername()).orElseThrow(() -> new EntityNotFoundException("User not found"));
+            String jwtToken = jwtService.generateToken(userAuth);
+            return AuthenticationResponse.builder().token(jwtToken).build();
     }
 
     public AuthenticationResponse register(RegisterRequest registerRequest) {
@@ -42,7 +49,7 @@ public class AuthenticationService {
         UserAuth user=UserAuth.builder()
                 .role(Role.valueOf(registerRequest.getRole()))
                 .email(registerRequest.getUsername())
-                .password(registerRequest.getPassword())
+                .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .employee(employee)
                 .build();
         userRepository.save(user);
