@@ -2,7 +2,9 @@ package com.hyperface.employeemanagementsystem.security;
 
 import com.hyperface.employeemanagementsystem.services.impl.JwtService;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -62,7 +64,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
             filterChain.doFilter(request,response);
-        }catch (ExpiredJwtException | SignatureException e){
+        }catch (ExpiredJwtException | SignatureException | MalformedJwtException  e){
             exceptionResolver.resolveException(request,response,null,e);
         }
     }

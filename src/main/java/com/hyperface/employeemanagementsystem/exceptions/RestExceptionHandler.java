@@ -2,6 +2,7 @@ package com.hyperface.employeemanagementsystem.exceptions;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -10,6 +11,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -26,7 +28,7 @@ public class RestExceptionHandler{
     private ResponseEntity<Object> buildResponseEntity(ApiError apiError) {
         return new ResponseEntity<>(apiError, apiError.getStatus());
     }
-    @ExceptionHandler({BadCredentialsException.class})
+    @ExceptionHandler(BadCredentialsException.class)
     @ResponseBody
     public ResponseEntity<Object> handleBadCredentialsException(BadCredentialsException ex) {
 
@@ -34,7 +36,7 @@ public class RestExceptionHandler{
                 ex.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(apiError);
     }
-    @ExceptionHandler({ExpiredJwtException.class, SignatureException.class})
+    @ExceptionHandler({ExpiredJwtException.class, SignatureException.class, MalformedJwtException.class})
     @ResponseBody
     public ResponseEntity<Object> handleJWT(Exception ex) {
 
@@ -42,7 +44,7 @@ public class RestExceptionHandler{
                 "Invalid token supplied");
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(apiError);
     }
-    @ExceptionHandler({AccessDeniedException.class})
+    @ExceptionHandler(AccessDeniedException.class)
     @ResponseBody
     public ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException ex) {
 
@@ -50,9 +52,9 @@ public class RestExceptionHandler{
                 "You don't have access to the requested resource.");
         return ResponseEntity.status(FORBIDDEN).body(apiError);
     }
-    @ExceptionHandler(EntityNotFoundException.class)
+    @ExceptionHandler({EntityNotFoundException.class})
     public ResponseEntity<Object> handleEntityNotFound(
-            EntityNotFoundException ex) {
+            Exception ex) {
         ApiError apiError = new ApiError(NOT_FOUND);
         apiError.setMessage(ex.getMessage());
         return buildResponseEntity(apiError);
