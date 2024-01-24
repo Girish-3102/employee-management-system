@@ -1,14 +1,21 @@
 package com.hyperface.employeemanagementsystem.exceptions;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,18 +26,34 @@ public class RestExceptionHandler{
     private ResponseEntity<Object> buildResponseEntity(ApiError apiError) {
         return new ResponseEntity<>(apiError, apiError.getStatus());
     }
+    @ExceptionHandler({BadCredentialsException.class})
+    @ResponseBody
+    public ResponseEntity<Object> handleBadCredentialsException(BadCredentialsException ex) {
+
+        ApiError apiError = new ApiError(UNAUTHORIZED,
+                ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(apiError);
+    }
+    @ExceptionHandler({ExpiredJwtException.class, SignatureException.class})
+    @ResponseBody
+    public ResponseEntity<Object> handleJWT(Exception ex) {
+
+        ApiError apiError = new ApiError(UNAUTHORIZED,
+                "Invalid token supplied");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(apiError);
+    }
+    @ExceptionHandler({AccessDeniedException.class})
+    @ResponseBody
+    public ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException ex) {
+
+        ApiError apiError = new ApiError(FORBIDDEN,
+                "You don't have access to the requested resource.");
+        return ResponseEntity.status(FORBIDDEN).body(apiError);
+    }
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<Object> handleEntityNotFound(
             EntityNotFoundException ex) {
         ApiError apiError = new ApiError(NOT_FOUND);
-        apiError.setMessage(ex.getMessage());
-        return buildResponseEntity(apiError);
-    }
-
-    @ExceptionHandler(InternalAuthenticationServiceException.class)
-    public ResponseEntity<Object> handleEntityNotFound(
-            InternalAuthenticationServiceException ex) {
-        ApiError apiError = new ApiError(UNAUTHORIZED);
         apiError.setMessage(ex.getMessage());
         return buildResponseEntity(apiError);
     }

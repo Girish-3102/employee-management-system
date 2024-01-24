@@ -1,6 +1,7 @@
 package com.hyperface.employeemanagementsystem.models;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -30,7 +31,7 @@ public class UserAuth implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @OneToOne
+    @OneToOne(cascade = {CascadeType.ALL})
     private Employee employee;
 
     @Override
