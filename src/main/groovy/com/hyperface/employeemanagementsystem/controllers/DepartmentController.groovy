@@ -6,8 +6,6 @@ import com.hyperface.employeemanagementsystem.services.DepartmentService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/department")
 class DepartmentController {

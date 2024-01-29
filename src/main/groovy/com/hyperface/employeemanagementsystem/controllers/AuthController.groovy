@@ -6,7 +6,6 @@ import com.hyperface.employeemanagementsystem.models.dtos.AuthenticationResponse
 import com.hyperface.employeemanagementsystem.models.dtos.RegisterRequest;
 import com.hyperface.employeemanagementsystem.services.impl.AuthenticationService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

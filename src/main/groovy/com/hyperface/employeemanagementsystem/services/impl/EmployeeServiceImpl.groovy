@@ -54,6 +54,7 @@ class EmployeeServiceImpl implements EmployeeService {
     Employee updateEmployee(Long id,EmployeeRequest employeeRequest){
         Employee employee=getEmployeeById(id);
         employeeMapper.updateEmployeeFromDto(employeeRequest,employee);
+        print(employeeRequest.getDepartmentId())
         if(employeeRequest.getDepartmentId()!=null) {
             Department department = departmentService.getDepartmentById(employeeRequest.getDepartmentId());
             employee.setDepartment(department);

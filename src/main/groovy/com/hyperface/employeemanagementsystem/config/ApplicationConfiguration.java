@@ -2,7 +2,6 @@ package com.hyperface.employeemanagementsystem.config;
 
 
 import com.hyperface.employeemanagementsystem.repositories.UserRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;

@@ -2,12 +2,6 @@ package com.hyperface.employeemanagementsystem.models;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Table(name = "department")

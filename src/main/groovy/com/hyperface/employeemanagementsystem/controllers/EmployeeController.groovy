@@ -3,10 +3,7 @@ package com.hyperface.employeemanagementsystem.controllers;
 import com.hyperface.employeemanagementsystem.models.Employee;
 import com.hyperface.employeemanagementsystem.models.dtos.EmployeeRequest;
 import com.hyperface.employeemanagementsystem.services.EmployeeService;
-import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/employee")

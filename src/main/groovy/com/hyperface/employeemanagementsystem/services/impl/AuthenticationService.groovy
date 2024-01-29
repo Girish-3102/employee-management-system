@@ -2,7 +2,6 @@ package com.hyperface.employeemanagementsystem.services.impl;
 
 
 import com.hyperface.employeemanagementsystem.models.Employee;
-import com.hyperface.employeemanagementsystem.models.Role;
 import com.hyperface.employeemanagementsystem.models.UserAuth;
 import com.hyperface.employeemanagementsystem.models.dtos.AuthenticationRequest;
 import com.hyperface.employeemanagementsystem.models.dtos.AuthenticationResponse;

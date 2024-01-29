@@ -1,9 +1,10 @@
-package com.hyperface.employeemanagementsystem.models.dtos;
+package com.hyperface.employeemanagementsystem.models.dtos
 
+import groovy.transform.TupleConstructor;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
-
+@TupleConstructor
 class ProjectRequest {
     @NotEmpty(message = "Project name cannot be empty")
     String name;
