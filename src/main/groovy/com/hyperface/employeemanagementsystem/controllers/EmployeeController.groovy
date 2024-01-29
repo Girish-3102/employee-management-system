@@ -16,7 +16,6 @@ class EmployeeController {
 
     @GetMapping("")
     List<Employee> getAllEmployees(){
-        print(employeeService.getAllEmployees())
         return employeeService.getAllEmployees();
     }
     @GetMapping("/{id}")
