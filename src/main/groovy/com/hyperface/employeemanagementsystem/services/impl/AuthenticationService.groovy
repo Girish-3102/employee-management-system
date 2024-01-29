@@ -50,12 +50,11 @@ class AuthenticationService {
         try{
             EmployeeRequest employeeRequest=new EmployeeRequest(registerRequest.getFirstName(), registerRequest.getLastName(), registerRequest.getDepartmentId());
             Employee employee=employeeService.createEmployee(employeeRequest);
-            UserAuth user=UserAuth.builder()
-                    .role(registerRequest.getRole())
-                    .email(registerRequest.getUsername())
-                    .password(passwordEncoder.encode(registerRequest.getPassword()))
-                    .employee(employee)
-                    .build();
+            UserAuth user=new UserAuth();
+            user.setEmail(registerRequest.getUsername())
+            user.setPassword(passwordEncoder.encode(registerRequest.getPassword()))
+            user.setEmployee(employee)
+            user.setRole(registerRequest.getRole())
             userRepository.save(user);
             String jwtToken=jwtService.generateToken(user);
             return AuthenticationResponse.builder().token(jwtToken).build();

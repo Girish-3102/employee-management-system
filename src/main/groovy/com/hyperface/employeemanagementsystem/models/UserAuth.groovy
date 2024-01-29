@@ -1,6 +1,6 @@
 package com.hyperface.employeemanagementsystem.models
 
-import groovy.transform.builder.Builder;
+import groovy.transform.TupleConstructor
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 
 @Entity
+@TupleConstructor
 class UserAuth implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
