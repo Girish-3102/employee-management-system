@@ -1,0 +1,15 @@
+package com.hyperface.employeemanagementsystem.models.dtos
+
+import groovy.transform.TupleConstructor
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+
+@TupleConstructor
+class EmployeeRequest {
+    @NotEmpty(message = "Employee's first name cannot be empty")
+    String firstName;
+    @NotEmpty(message = "Employee's last name cannot be empty")
+    String lastName;
+    @NotNull(message = "Department ID cannot be null")
+    Long departmentId;
+}

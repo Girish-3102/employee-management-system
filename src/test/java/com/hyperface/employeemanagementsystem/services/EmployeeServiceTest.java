@@ -98,6 +98,7 @@ public class EmployeeServiceTest {
     public void EmployeeService_UpdateEmployeeWithoutDepartment_ReturnsEmployee(){
         employeeRequest.setFirstName("Harish");
         employeeRequest.setLastName("N");
+        employeeRequest.setDepartmentId(null);
         when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
         when(employeeRepository.save(any(Employee.class))).then(returnsFirstArg());
         Employee savedEmployee=employeeService.updateEmployee(employeeId,employeeRequest);
