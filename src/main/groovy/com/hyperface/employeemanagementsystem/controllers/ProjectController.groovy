@@ -11,7 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/project")
 class ProjectController {
-    ProjectService projectService;
+    private final ProjectService projectService;
     ProjectController(ProjectService projectService) {
         this.projectService = projectService;
     }

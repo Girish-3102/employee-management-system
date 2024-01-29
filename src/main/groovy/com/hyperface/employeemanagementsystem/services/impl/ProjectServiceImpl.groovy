@@ -15,9 +15,9 @@ import java.util.Optional;
 
 @Service
 class ProjectServiceImpl implements ProjectService {
-    ProjectRepository projectRepository;
-    DepartmentService departmentService;
-    EmployeeService employeeService;
+    private final ProjectRepository projectRepository;
+    private final DepartmentService departmentService;
+    private final EmployeeService employeeService;
 
     ProjectServiceImpl(ProjectRepository projectRepository, DepartmentService departmentService, EmployeeService employeeService) {
         this.projectRepository = projectRepository;

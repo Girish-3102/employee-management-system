@@ -11,7 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/department")
 class DepartmentController {
-    DepartmentService departmentService;
+    private final DepartmentService departmentService;
 
     DepartmentController(DepartmentService departmentService) {
         this.departmentService = departmentService;

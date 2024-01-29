@@ -19,11 +19,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 class AuthenticationService {
-    UserRepository userRepository;
-    JwtService jwtService;
-    AuthenticationManager authenticationManager;
-    EmployeeService employeeService;
-    PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
+    private final EmployeeService employeeService;
+    private final PasswordEncoder passwordEncoder;
 
     AuthenticationService(UserRepository userRepository, JwtService jwtService, AuthenticationManager authenticationManager, EmployeeService employeeService, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository

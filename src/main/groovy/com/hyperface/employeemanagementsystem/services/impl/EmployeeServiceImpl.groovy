@@ -14,9 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 class EmployeeServiceImpl implements EmployeeService {
-    EmployeeRepository employeeRepository;
-    DepartmentService departmentService;
-    EmployeeMapper employeeMapper;
+    private final EmployeeRepository employeeRepository;
+    private final DepartmentService departmentService;
+    private final EmployeeMapper employeeMapper;
 
     EmployeeServiceImpl(EmployeeRepository employeeRepository, DepartmentService departmentService, EmployeeMapper employeeMapper) {
         this.employeeRepository = employeeRepository;

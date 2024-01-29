@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 class DepartmentServiceImpl implements DepartmentService {
-    DepartmentRepository departmentRepository;
+    private final DepartmentRepository departmentRepository;
     DepartmentServiceImpl(DepartmentRepository departmentRepository) {
         this.departmentRepository = departmentRepository;
     }

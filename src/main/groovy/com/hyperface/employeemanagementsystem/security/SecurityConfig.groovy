@@ -22,8 +22,8 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 @EnableWebSecurity
 @EnableMethodSecurity
 class SecurityConfig {
-    AuthenticationProvider authenticationProvider;
-    JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final AuthenticationProvider authenticationProvider;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     SecurityConfig(AuthenticationProvider authenticationProvider, JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.authenticationProvider = authenticationProvider;
