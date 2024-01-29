@@ -39,7 +39,7 @@ class RestExceptionHandler{
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseBody
     ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException ex) {
-
+        ex.printStackTrace()
         ApiError apiError = new ApiError(FORBIDDEN,
                 "You don't have access to the requested resource.");
         return buildResponseEntity(apiError);

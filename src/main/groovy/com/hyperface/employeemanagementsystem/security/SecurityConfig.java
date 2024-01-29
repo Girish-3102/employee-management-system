@@ -17,21 +17,22 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
+import java.util.Arrays;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 class SecurityConfig {
     private final AuthenticationProvider authenticationProvider;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final HandlerExceptionResolver exceptionResolver;
 
-    SecurityConfig(AuthenticationProvider authenticationProvider, JwtAuthenticationFilter jwtAuthenticationFilter) {
+    SecurityConfig(AuthenticationProvider authenticationProvider, JwtAuthenticationFilter jwtAuthenticationFilter, @Qualifier("handlerExceptionResolver") HandlerExceptionResolver exceptionResolver) {
         this.authenticationProvider = authenticationProvider;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.exceptionResolver = exceptionResolver;
     }
 
-    @Autowired
-    @Qualifier("handlerExceptionResolver")
-    private HandlerExceptionResolver exceptionResolver;
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http.csrf(AbstractHttpConfigurer::disable)
@@ -39,7 +40,7 @@ class SecurityConfig {
                         req.requestMatchers("/auth/authenticate")
                                 .permitAll()
                                 .requestMatchers(HttpMethod.GET,"/**").hasAnyAuthority(Role.USER.name(),Role.ADMIN.name(),Role.MANAGER.name())
-                                .requestMatchers("/project").hasAnyAuthority(Role.ADMIN.name(),Role.MANAGER.name())
+                                .requestMatchers("/project/**").hasAnyAuthority(Role.ADMIN.name(),Role.MANAGER.name())
                                 .requestMatchers("/**").hasAnyAuthority(Role.ADMIN.name())
                                 .anyRequest()
                                 .authenticated()
