@@ -3,12 +3,14 @@ package com.hyperface.employeemanagementsystem.controllers;
 import com.hyperface.employeemanagementsystem.models.Department;
 import com.hyperface.employeemanagementsystem.models.dtos.DepartmentRequest;
 import com.hyperface.employeemanagementsystem.services.DepartmentService;
+import com.hyperface.employeemanagementsystem.services.impl.JwtService;
 import com.hyperface.employeemanagementsystem.utils.TestUtils;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -27,10 +29,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(DepartmentController.class)
+@AutoConfigureMockMvc(addFilters = false)
 public class DepartmentControllerTest {
     @Autowired MockMvc mockMvc;
 
     @MockBean DepartmentService departmentService;
+
+    @MockBean JwtService jwtService;
 
     private Department department;
     private DepartmentRequest departmentRequest;
