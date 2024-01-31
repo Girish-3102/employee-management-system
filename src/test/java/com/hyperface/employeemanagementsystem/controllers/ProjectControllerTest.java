@@ -3,35 +3,39 @@ import com.hyperface.employeemanagementsystem.exceptions.DifferentDepartmentExce
 import com.hyperface.employeemanagementsystem.models.Project;
 import com.hyperface.employeemanagementsystem.models.dtos.ProjectRequest;
 import com.hyperface.employeemanagementsystem.services.ProjectService;
+import com.hyperface.employeemanagementsystem.services.impl.JwtService;
 import com.hyperface.employeemanagementsystem.utils.TestUtils;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(ProjectController.class)
+@AutoConfigureMockMvc(addFilters = false)
 public class ProjectControllerTest {
     @Autowired MockMvc mockMvc;
     @MockBean ProjectService projectService;
 
+    @MockBean JwtService jwtService;
     private ProjectRequest projectRequest;
     private Project project;
     private Long projectId;
@@ -70,7 +74,7 @@ public class ProjectControllerTest {
 
     @Test
     public void ProjectController_CreateProject_ReturnsProjectJson() throws Exception{
-        when(projectService.createProject(projectRequest)).thenReturn(project);
+        when(projectService.createProject(refEq(projectRequest))).thenReturn(project);
         mockMvc.perform(post("/project")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(TestUtils.convertObjectToJson(projectRequest)))
@@ -96,11 +100,12 @@ public class ProjectControllerTest {
     }
     @Test
     public void ProjectController_CreateProjectInWhichDepartmentNotPresent_ReturnsNotFound() throws Exception{
-        when(projectService.createProject(projectRequest)).thenThrow(EntityNotFoundException.class);
+        when(projectService.createProject(refEq(projectRequest))).thenThrow(EntityNotFoundException.class);
         mockMvc.perform(post("/project")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(TestUtils.convertObjectToJson(projectRequest)))
                 .andExpect(status().isNotFound());
+
     }
     @Test
     public void ProjectController_PutProject_ReturnsProjectJson() throws Exception{

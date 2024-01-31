@@ -1,10 +1,10 @@
 package com.hyperface.employeemanagementsystem.services;
 
 
-import com.hyperface.employeemanagementsystem.models.Department;
-import com.hyperface.employeemanagementsystem.models.Project;
+import com.hyperface.employeemanagementsystem.models.*;
 import com.hyperface.employeemanagementsystem.models.dtos.ProjectRequest;
 import com.hyperface.employeemanagementsystem.repositories.ProjectRepository;
+import com.hyperface.employeemanagementsystem.security.SecurityUtils;
 import com.hyperface.employeemanagementsystem.services.impl.ProjectServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
@@ -29,18 +29,28 @@ public class ProjectServiceTest {
     ProjectRepository projectRepository;
     @Mock DepartmentService departmentService;
     @Mock EmployeeService employeeService;
+    @Mock SecurityUtils securityUtils;
     @InjectMocks ProjectServiceImpl projectService;
     private ProjectRequest projectRequest;
     private Project project;
     private Long projectId;
+    private UserAuth userAuth;
     @BeforeEach
     public void setUpData(){
+        Department department=new Department("OMS");
+        department.setId(1L);
         projectRequest=new ProjectRequest();
         projectRequest.setName("Employee Management System");
         project=new Project();
         project.setName("Employee Management System");
         projectId=1L;
         project.setId(projectId);
+        project.setDepartment(department);
+        userAuth=new UserAuth(1L,"manish.kb@gmail.com","123");
+        userAuth.setEmployee(new Employee());
+        userAuth.getEmployee().setDepartment(department);
+        lenient().when(securityUtils.getPrincipal()).thenReturn(userAuth);
+        lenient().when(securityUtils.hasRole(Role.MANAGER.name())).thenReturn(true);
     }
 
     @Test
@@ -90,6 +100,7 @@ public class ProjectServiceTest {
 
     @Test
     public void ProjectService_DeleteProject_ReturnVoid(){
+        when(projectRepository.findById(projectId)).thenReturn(Optional.of(project));
         projectService.deleteProjectById(projectId);
         verify(projectRepository,times(1)).deleteById(projectId);
     }

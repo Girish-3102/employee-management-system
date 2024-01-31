@@ -1,12 +1,11 @@
 package com.hyperface.employeemanagementsystem.services;
 
 import com.hyperface.employeemanagementsystem.exceptions.DifferentDepartmentException;
-import com.hyperface.employeemanagementsystem.models.Department;
-import com.hyperface.employeemanagementsystem.models.Employee;
-import com.hyperface.employeemanagementsystem.models.Project;
+import com.hyperface.employeemanagementsystem.models.*;
 import com.hyperface.employeemanagementsystem.models.dtos.EmployeeRequest;
 import com.hyperface.employeemanagementsystem.models.mappers.EmployeeMapper;
 import com.hyperface.employeemanagementsystem.repositories.EmployeeRepository;
+import com.hyperface.employeemanagementsystem.security.SecurityUtils;
 import com.hyperface.employeemanagementsystem.services.impl.EmployeeServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
@@ -18,6 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.access.AccessDeniedException;
 
 import java.util.*;
 
@@ -31,6 +31,8 @@ public class EmployeeServiceTest {
     private DepartmentService departmentService;
     @Mock
     private EmployeeRepository employeeRepository;
+    @Mock
+    private SecurityUtils securityUtils;
     @Spy
     EmployeeMapper employeeMapper= Mappers.getMapper(EmployeeMapper.class);
     @InjectMocks
@@ -41,6 +43,7 @@ public class EmployeeServiceTest {
     private Employee employee;
     private Long employeeId;
     private Long departmentId;
+    private UserAuth userAuth;
 
     @BeforeEach
     public void setUpData(){
@@ -56,6 +59,8 @@ public class EmployeeServiceTest {
         employee.setFirstName("Manish");
         employee.setLastName("KB");
         employee.setId(employeeId);
+        userAuth=new UserAuth(employeeId,"manish.kb@gmail.com","123");
+        userAuth.setEmployee(employee);
     }
 
     @Test
@@ -99,8 +104,11 @@ public class EmployeeServiceTest {
         employeeRequest.setFirstName("Harish");
         employeeRequest.setLastName("N");
         employeeRequest.setDepartmentId(null);
+        userAuth.setRole(Role.USER);
         when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
         when(employeeRepository.save(any(Employee.class))).then(returnsFirstArg());
+        when(securityUtils.getPrincipal()).thenReturn(userAuth);
+        when(securityUtils.hasRole(Role.ADMIN.name())).thenReturn(false);
         Employee savedEmployee=employeeService.updateEmployee(employeeId,employeeRequest);
         Assertions.assertNotNull(savedEmployee);
         Assertions.assertEquals(employeeId,savedEmployee.getId());
@@ -109,17 +117,32 @@ public class EmployeeServiceTest {
     }
 
     @Test
-    public void EmployeeService_UpdateEmployeeWithDepartment_ReturnsEmployee(){
+    public void EmployeeService_UpdateEmployeeWithoutDepartmentAndDifferentID_ReturnsEmployee(){
+        employeeRequest.setFirstName("Harish");
+        employeeRequest.setLastName("N");
+        employeeRequest.setDepartmentId(null);
+        userAuth.setRole(Role.USER);
+        userAuth.getEmployee().setId(3L);
+        when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
+        when(securityUtils.getPrincipal()).thenReturn(userAuth);
+        when(securityUtils.hasRole(Role.ADMIN.name())).thenReturn(false);
+        Assertions.assertThrows(AccessDeniedException.class,()->employeeService.updateEmployee(employeeId,employeeRequest));
+    }
+
+    @Test
+    public void EmployeeService_UpdateEmployeeWithDepartmentWithAdminAccess_ReturnsEmployee(){
         Long departmentIdToBeUpdated=2L;
         employeeRequest.setDepartmentId(departmentIdToBeUpdated);
+        userAuth.setRole(Role.ADMIN);
         Department departmentToBeUpdated=new Department("TENET");
         departmentToBeUpdated.setId(departmentIdToBeUpdated);
         employee.setDepartment(department);
         employee.setProject(new HashSet<>(List.of(new Project("Dell",department))));
-
         when(departmentService.getDepartmentById(departmentIdToBeUpdated)).thenReturn(departmentToBeUpdated);
         when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
         when(employeeRepository.save(any(Employee.class))).then(returnsFirstArg());
+        when(securityUtils.getPrincipal()).thenReturn(userAuth);
+        when(securityUtils.hasRole(Role.ADMIN.name())).thenReturn(true);
 
         Employee savedEmployee=employeeService.updateEmployee(employeeId,employeeRequest);
 
@@ -129,6 +152,17 @@ public class EmployeeServiceTest {
         Assertions.assertEquals(employeeRequest.getLastName(),savedEmployee.getLastName());
         Assertions.assertEquals(departmentIdToBeUpdated,savedEmployee.getDepartment().getId());
         Assertions.assertEquals(0,savedEmployee.getProject().size());
+    }
+
+
+    @Test
+    public void EmployeeService_UpdateEmployeeWithDepartmentWithoutAdminAccess_ReturnsEmployee(){
+        employeeRequest.setDepartmentId(3L);
+        userAuth.setRole(Role.USER);
+        when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
+        when(securityUtils.getPrincipal()).thenReturn(userAuth);
+        when(securityUtils.hasRole(Role.ADMIN.name())).thenReturn(false);
+        Assertions.assertThrows(AccessDeniedException.class,()->employeeService.updateEmployee(employeeId,employeeRequest));
     }
 
     @Test
