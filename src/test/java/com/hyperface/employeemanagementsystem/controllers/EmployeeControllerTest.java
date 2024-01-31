@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +20,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -31,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(EmployeeController.class)
-@AutoConfigureMockMvc(addFilters = false)
+@WithMockUser
 public class EmployeeControllerTest {
     @Autowired MockMvc mockMvc;
     @MockBean EmployeeService employeeService;
@@ -85,7 +87,8 @@ public class EmployeeControllerTest {
         mockMvc.perform(put("/employee")
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("id", String.valueOf(employeeId))
-                        .content(TestUtils.convertObjectToJson(employeeRequest)))
+                        .content(TestUtils.convertObjectToJson(employeeRequest))
+                        .with(csrf()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.firstName",is(employeeRequest.getFirstName())));
@@ -97,7 +100,8 @@ public class EmployeeControllerTest {
         mockMvc.perform(put("/employee")
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("id", String.valueOf(employeeId))
-                        .content(TestUtils.convertObjectToJson(employeeRequest)))
+                        .content(TestUtils.convertObjectToJson(employeeRequest))
+                        .with(csrf()))
                 .andExpect(status().isNotFound());
     }
 
@@ -106,7 +110,8 @@ public class EmployeeControllerTest {
         when(employeeService.deleteEmployee(employeeId)).thenReturn("Success");
         mockMvc.perform(delete("/employee")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("id", String.valueOf(employeeId)))
+                        .param("id", String.valueOf(employeeId))
+                        .with(csrf()))
                 .andExpect(status().isOk());
     }
 }
