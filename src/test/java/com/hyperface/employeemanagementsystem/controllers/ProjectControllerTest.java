@@ -14,10 +14,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -30,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(ProjectController.class)
-@AutoConfigureMockMvc(addFilters = false)
+@WithMockUser
 public class ProjectControllerTest {
     @Autowired MockMvc mockMvc;
     @MockBean ProjectService projectService;
@@ -77,7 +79,8 @@ public class ProjectControllerTest {
         when(projectService.createProject(refEq(projectRequest))).thenReturn(project);
         mockMvc.perform(post("/project")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(TestUtils.convertObjectToJson(projectRequest)))
+                        .content(TestUtils.convertObjectToJson(projectRequest))
+                        .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name",is(projectRequest.getName())));
     }
@@ -87,7 +90,8 @@ public class ProjectControllerTest {
         projectRequest.setName(null);
         mockMvc.perform(post("/project")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(TestUtils.convertObjectToJson(projectRequest)))
+                        .content(TestUtils.convertObjectToJson(projectRequest))
+                        .with(csrf()))
                 .andExpect(status().isBadRequest());
     }
     @Test
@@ -95,7 +99,8 @@ public class ProjectControllerTest {
         projectRequest.setDepartmentId(null);
         mockMvc.perform(post("/project")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(TestUtils.convertObjectToJson(projectRequest)))
+                        .content(TestUtils.convertObjectToJson(projectRequest))
+                        .with(csrf()))
                 .andExpect(status().isBadRequest());
     }
     @Test
@@ -103,7 +108,8 @@ public class ProjectControllerTest {
         when(projectService.createProject(refEq(projectRequest))).thenThrow(EntityNotFoundException.class);
         mockMvc.perform(post("/project")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(TestUtils.convertObjectToJson(projectRequest)))
+                        .content(TestUtils.convertObjectToJson(projectRequest))
+                        .with(csrf()))
                 .andExpect(status().isNotFound());
 
     }
@@ -113,7 +119,8 @@ public class ProjectControllerTest {
         mockMvc.perform(put("/project")
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("id", String.valueOf(projectId))
-                        .content(TestUtils.convertObjectToJson(projectRequest)))
+                        .content(TestUtils.convertObjectToJson(projectRequest))
+                        .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name",is(projectRequest.getName())));
     }
@@ -123,7 +130,8 @@ public class ProjectControllerTest {
         mockMvc.perform(put("/project")
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("id", String.valueOf(projectId))
-                        .content(TestUtils.convertObjectToJson(projectRequest)))
+                        .content(TestUtils.convertObjectToJson(projectRequest))
+                        .with(csrf()))
                 .andExpect(status().isNotFound());
     }
 
@@ -135,7 +143,8 @@ public class ProjectControllerTest {
         mockMvc.perform(put("/project/addEmployees")
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("id", String.valueOf(projectId))
-                        .content(TestUtils.convertObjectToJson(projectRequest)))
+                        .content(TestUtils.convertObjectToJson(projectRequest))
+                        .with(csrf()))
                 .andExpect(status().isNotFound());
     }
     @Test
@@ -146,7 +155,8 @@ public class ProjectControllerTest {
         mockMvc.perform(put("/project/addEmployees")
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("id", String.valueOf(projectId))
-                        .content(TestUtils.convertObjectToJson(projectRequest)))
+                        .content(TestUtils.convertObjectToJson(projectRequest))
+                        .with(csrf()))
                 .andExpect(status().isBadRequest());
     }
     @Test
@@ -157,7 +167,8 @@ public class ProjectControllerTest {
         mockMvc.perform(put("/project/addEmployees")
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("id", String.valueOf(projectId))
-                        .content(TestUtils.convertObjectToJson(projectRequest)))
+                        .content(TestUtils.convertObjectToJson(projectRequest))
+                        .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$",is("Success")));
     }
@@ -169,6 +180,7 @@ public class ProjectControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("id", String.valueOf(projectId))
                         .param("employeeId",String.valueOf(employeeId))
+                        .with(csrf())
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$",is("Successfully Removed")));
@@ -179,6 +191,7 @@ public class ProjectControllerTest {
         mockMvc.perform(delete("/project")
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("id", String.valueOf(projectId))
+                        .with(csrf())
                 ).andExpect(status().isOk())
                 .andExpect(jsonPath("$",is("Success")));
     }
