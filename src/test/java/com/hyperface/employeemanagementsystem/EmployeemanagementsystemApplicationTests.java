@@ -18,10 +18,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.net.URI;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("test")
 class EmployeemanagementsystemApplicationTests {
 	@LocalServerPort
 	private int port;
@@ -35,12 +37,12 @@ class EmployeemanagementsystemApplicationTests {
 	@BeforeEach
 	void setUp(){
 		headers = new HttpHeaders();
-		jwtToken= jwtService.generateToken(new UserAuth(3L,"harish@gmail.com","harish@123", Role.USER));
+		jwtToken= jwtService.generateToken(new UserAuth(2L,"harish@gmail.com","harish@123", Role.USER));
 		headers.set("Authorization", "Bearer " + jwtToken);
 	}
 	@Test
 	public void TestGetEmployeeById_ReturnsEmployeeResponse() throws JsonProcessingException {
-		String url = "http://localhost:" + port + "/employee/3";
+		String url = "http://localhost:" + port + "/employee/2";
 		RequestEntity<Object> requestEntity = new RequestEntity<>(headers, HttpMethod.GET, URI.create(url));
 		String response = restTemplate.exchange(requestEntity, String.class).getBody();
 		JsonNode responseJson = objectMapper.readTree(response);
