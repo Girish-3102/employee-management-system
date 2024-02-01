@@ -46,7 +46,6 @@ class AuthenticationService {
 
     @Transactional
     AuthenticationResponse register(RegisterRequest registerRequest) {
-        try{
             EmployeeRequest employeeRequest=new EmployeeRequest(registerRequest.getFirstName(), registerRequest.getLastName(), registerRequest.getDepartmentId());
             Employee employee=employeeService.createEmployee(employeeRequest);
             UserAuth user=new UserAuth();
@@ -57,8 +56,5 @@ class AuthenticationService {
             userRepository.save(user);
             String jwtToken=jwtService.generateToken(user);
             return AuthenticationResponse.builder().token(jwtToken).build();
-        }catch (Exception e){
-            throw new RuntimeException(e.getMessage())
-        }
     }
 }
