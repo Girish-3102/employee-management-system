@@ -39,12 +39,20 @@ class EmployeemanagementsystemApplicationTests {
 		headers.set("Authorization", "Bearer " + jwtToken);
 	}
 	@Test
-	public void testYourApiEndpoint() throws JsonProcessingException {
+	public void TestGetEmployeeById_ReturnsEmployeeResponse() throws JsonProcessingException {
 		String url = "http://localhost:" + port + "/employee/3";
 		RequestEntity<Object> requestEntity = new RequestEntity<>(headers, HttpMethod.GET, URI.create(url));
 		String response = restTemplate.exchange(requestEntity, String.class).getBody();
 		JsonNode responseJson = objectMapper.readTree(response);
 		Assertions.assertEquals("Harish", responseJson.get("firstName").asText());
+	}
+	@Test
+	public void PostDepartmentWithUserRole_ReturnsForbidden() throws JsonProcessingException {
+		String url = "http://localhost:" + port + "/department";
+		RequestEntity<Object> requestEntity = new RequestEntity<>(headers, HttpMethod.POST, URI.create(url));
+		String response = restTemplate.exchange(requestEntity, String.class).getBody();
+		JsonNode responseJson = objectMapper.readTree(response);
+		Assertions.assertEquals("FORBIDDEN", responseJson.get("status").asText());
 	}
 
 }
