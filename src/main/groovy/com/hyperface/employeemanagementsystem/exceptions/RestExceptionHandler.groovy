@@ -3,7 +3,9 @@ package com.hyperface.employeemanagementsystem.exceptions;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
-import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.EntityNotFoundException
+import org.hibernate.exception.ConstraintViolationException
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.access.AccessDeniedException;
@@ -12,7 +14,10 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.bind.annotation.RestControllerAdvice
+
+import java.sql.SQLIntegrityConstraintViolationException;
+
 import static org.springframework.http.HttpStatus.*;
 
 @RestControllerAdvice
@@ -75,10 +80,18 @@ class RestExceptionHandler{
         ApiError apiError=new ApiError(BAD_REQUEST,ex.getMessage());
         return buildResponseEntity(apiError);
     }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    ResponseEntity<Object> handleConstraintViolationException(DataIntegrityViolationException ex) {
+        ApiError apiError=new ApiError(BAD_REQUEST,"The entered username already exists");
+        return buildResponseEntity(apiError);
+    }
+
     @ExceptionHandler(RuntimeException.class)
      ResponseEntity<Object> handleRuntimeException(
             RuntimeException ex) {
         ApiError apiError = new ApiError(INTERNAL_SERVER_ERROR);
+        ex.printStackTrace()
         apiError.setMessage("Sorry, We will fix it soon!");
         return buildResponseEntity(apiError);
     }

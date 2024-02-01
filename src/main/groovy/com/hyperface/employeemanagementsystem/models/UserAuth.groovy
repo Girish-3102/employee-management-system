@@ -14,7 +14,7 @@ class UserAuth implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column
+    @Column(unique = true)
     String email;
 
     @Column
