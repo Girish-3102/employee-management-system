@@ -1,7 +1,8 @@
 package com.hyperface.employeemanagementsystem.models;
 
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonBackReference
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -22,6 +23,10 @@ class Employee {
     @JoinColumn(name = "department_id")
     @JsonBackReference
     Department department;
+
+    @OneToOne(mappedBy = "employee",orphanRemoval = true)
+    @JsonIgnore
+    UserAuth userAuth;
 
     @ManyToMany(targetEntity = Project.class,cascade = [CascadeType.MERGE,CascadeType.PERSIST])
     @JoinTable(
