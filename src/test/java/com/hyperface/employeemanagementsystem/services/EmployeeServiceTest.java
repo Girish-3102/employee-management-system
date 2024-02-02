@@ -31,8 +31,6 @@ public class EmployeeServiceTest {
     private DepartmentService departmentService;
     @Mock
     private EmployeeRepository employeeRepository;
-    @Mock
-    private SecurityUtils securityUtils;
     @Spy
     EmployeeMapper employeeMapper= Mappers.getMapper(EmployeeMapper.class);
     @InjectMocks
@@ -43,7 +41,6 @@ public class EmployeeServiceTest {
     private Employee employee;
     private Long employeeId;
     private Long departmentId;
-    private UserAuth userAuth;
 
     @BeforeEach
     public void setUpData(){
@@ -59,8 +56,6 @@ public class EmployeeServiceTest {
         employee.setFirstName("Manish");
         employee.setLastName("KB");
         employee.setId(employeeId);
-        userAuth=new UserAuth(employeeId,"manish.kb@gmail.com","123");
-        userAuth.setEmployee(employee);
     }
 
     @Test
@@ -104,11 +99,8 @@ public class EmployeeServiceTest {
         employeeRequest.setFirstName("Harish");
         employeeRequest.setLastName("N");
         employeeRequest.setDepartmentId(null);
-        userAuth.setRole(Role.USER);
         when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
         when(employeeRepository.save(any(Employee.class))).then(returnsFirstArg());
-        when(securityUtils.getPrincipal()).thenReturn(userAuth);
-        when(securityUtils.hasRole(Role.ADMIN.name())).thenReturn(false);
         Employee savedEmployee=employeeService.updateEmployee(employeeId,employeeRequest);
         Assertions.assertNotNull(savedEmployee);
         Assertions.assertEquals(employeeId,savedEmployee.getId());
@@ -117,23 +109,8 @@ public class EmployeeServiceTest {
     }
 
     @Test
-    public void EmployeeService_UpdateEmployeeWithoutDepartmentAndDifferentID_ReturnsEmployee(){
-        employeeRequest.setFirstName("Harish");
-        employeeRequest.setLastName("N");
-        employeeRequest.setDepartmentId(null);
-        userAuth.setRole(Role.USER);
-        userAuth.getEmployee().setId(3L);
-        when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
-        when(securityUtils.getPrincipal()).thenReturn(userAuth);
-        when(securityUtils.hasRole(Role.ADMIN.name())).thenReturn(false);
-        Assertions.assertThrows(AccessDeniedException.class,()->employeeService.updateEmployee(employeeId,employeeRequest));
-    }
-
-    @Test
-    public void EmployeeService_UpdateEmployeeWithDepartmentWithAdminAccess_ReturnsEmployee(){
+    public void EmployeeService_UpdateDepartment_ReturnsEmployee(){
         Long departmentIdToBeUpdated=2L;
-        employeeRequest.setDepartmentId(departmentIdToBeUpdated);
-        userAuth.setRole(Role.ADMIN);
         Department departmentToBeUpdated=new Department("TENET");
         departmentToBeUpdated.setId(departmentIdToBeUpdated);
         employee.setDepartment(department);
@@ -141,28 +118,13 @@ public class EmployeeServiceTest {
         when(departmentService.getDepartmentById(departmentIdToBeUpdated)).thenReturn(departmentToBeUpdated);
         when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
         when(employeeRepository.save(any(Employee.class))).then(returnsFirstArg());
-        when(securityUtils.getPrincipal()).thenReturn(userAuth);
-        when(securityUtils.hasRole(Role.ADMIN.name())).thenReturn(true);
 
-        Employee savedEmployee=employeeService.updateEmployee(employeeId,employeeRequest);
+        Employee savedEmployee=employeeService.updateDepartment(employeeId,departmentIdToBeUpdated);
 
         Assertions.assertNotNull(savedEmployee);
         Assertions.assertEquals(employeeId,savedEmployee.getId());
-        Assertions.assertEquals(employeeRequest.getFirstName(),savedEmployee.getFirstName());
-        Assertions.assertEquals(employeeRequest.getLastName(),savedEmployee.getLastName());
         Assertions.assertEquals(departmentIdToBeUpdated,savedEmployee.getDepartment().getId());
         Assertions.assertEquals(0,savedEmployee.getProject().size());
-    }
-
-
-    @Test
-    public void EmployeeService_UpdateEmployeeWithDepartmentWithoutAdminAccess_ReturnsEmployee(){
-        employeeRequest.setDepartmentId(3L);
-        userAuth.setRole(Role.USER);
-        when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
-        when(securityUtils.getPrincipal()).thenReturn(userAuth);
-        when(securityUtils.hasRole(Role.ADMIN.name())).thenReturn(false);
-        Assertions.assertThrows(AccessDeniedException.class,()->employeeService.updateEmployee(employeeId,employeeRequest));
     }
 
     @Test

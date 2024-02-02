@@ -20,13 +20,11 @@ class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final DepartmentService departmentService;
     private final EmployeeMapper employeeMapper;
-    private final SecurityUtils securityUtils
 
-    EmployeeServiceImpl(EmployeeRepository employeeRepository, DepartmentService departmentService, EmployeeMapper employeeMapper, SecurityUtils securityUtils) {
+    EmployeeServiceImpl(EmployeeRepository employeeRepository, DepartmentService departmentService, EmployeeMapper employeeMapper) {
         this.employeeRepository = employeeRepository
         this.departmentService = departmentService
         this.employeeMapper = employeeMapper
-        this.securityUtils = securityUtils
     }
 
     @Override
@@ -58,18 +56,17 @@ class EmployeeServiceImpl implements EmployeeService {
     @Override
     Employee updateEmployee(Long id,EmployeeRequest employeeRequest){
         Employee employee=getEmployeeById(id);
-        verifyEmployeeHasAccess(id)
         employeeMapper.updateEmployeeFromDto(employeeRequest,employee);
-        if(employeeRequest.getDepartmentId()!=null) {
-            def isAdmin=securityUtils.hasRole(Role.ADMIN.name())
-            if(!isAdmin){
-                throw new AccessDeniedException("No access to change department")
-            }
-            Department department = departmentService.getDepartmentById(employeeRequest.getDepartmentId());
-            employee.setDepartment(department);
-            employee.getProject().clear();
-        }
         return employeeRepository.save(employee);
+    }
+
+    @Override
+    Employee updateDepartment(Long id,Long departmentId){
+        Employee employee=getEmployeeById(id)
+        Department department = departmentService.getDepartmentById(departmentId)
+        employee.setDepartment(department)
+        employee.getProject().clear()
+        return employeeRepository.save(employee)
     }
     @Override
     String deleteEmployee(Long id) {
@@ -92,13 +89,5 @@ class EmployeeServiceImpl implements EmployeeService {
         Employee employee=getEmployeeById(id);
         employee.getProject().remove(project);
         return employeeRepository.save(employee);
-    }
-
-    void verifyEmployeeHasAccess(Long employeeId){
-        def userAuth=securityUtils.getPrincipal()
-        def isAdmin=securityUtils.hasRole(Role.ADMIN.name())
-        if(!isAdmin && userAuth.getEmployee().getId()!=employeeId){
-            throw new AccessDeniedException("Employee doesn't have access")
-        }
     }
 }
