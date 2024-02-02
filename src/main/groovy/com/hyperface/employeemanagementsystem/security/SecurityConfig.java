@@ -21,7 +21,7 @@ import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 class SecurityConfig {
     private final AuthenticationProvider authenticationProvider;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -40,6 +40,7 @@ class SecurityConfig {
                         req.requestMatchers("/auth/authenticate")
                                 .permitAll()
                                 .requestMatchers(HttpMethod.GET,"/**").hasAnyAuthority(Role.USER.name(),Role.ADMIN.name(),Role.MANAGER.name())
+                                .requestMatchers(HttpMethod.PUT,"/employee/updateDepartment/**").hasAnyAuthority(Role.ADMIN.name())
                                 .requestMatchers(HttpMethod.PUT,"/employee/**").hasAnyAuthority(Role.USER.name(),Role.ADMIN.name(),Role.MANAGER.name())
                                 .requestMatchers("/project/**").hasAnyAuthority(Role.ADMIN.name(),Role.MANAGER.name())
                                 .requestMatchers("/**").hasAnyAuthority(Role.ADMIN.name())

@@ -11,6 +11,7 @@ public interface EmployeeService {
     Employee getEmployeeById(Long id);
     List<Employee> getAllEmployees();
     Employee updateEmployee(Long id,EmployeeRequest employeeRequest);
+    Employee updateDepartment(Long id,Long departmentId);
     Employee assignProject(Long id, Project project);
     Employee unAssignProject(Long id,Project project);
     String deleteEmployee(Long id);
